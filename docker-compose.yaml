@@ -8,6 +8,9 @@ services:
     tty: True
     volumes:
       - ./dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf
+    networks:
+      default:
+        ipv4_address: 192.168.24.2
     
   client1:
     build: ./DockerClient

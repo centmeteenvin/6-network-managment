@@ -92,7 +92,7 @@ try:
 
     for i in range(2):
         BlockingCommand(
-            f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth{i + 1} client_container{i}")
+            f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth{i + 1} client_container{i + 1}")
     logger.info("Finished connecting containers to bridge")
 
     logger.info("Adding static routes")
@@ -104,7 +104,8 @@ try:
     shouldQuit = input("Type [exit] to exit: ") == "exit"
     while not shouldQuit:
         shouldQuit = input("Type [exit] to exit: ") == "exit"
-        raise Exception("END")
+        if shouldQuit:
+            raise Exception("END")
 except Exception as e:
     traceback.print_exc()
     logger.fatal(f"Got exception {e}, reverting all commands")

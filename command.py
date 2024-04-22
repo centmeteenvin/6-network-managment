@@ -102,3 +102,9 @@ class StaticRouteCommand(BlockingCommand):
         command = f"sudo ip route add {destinationIp} via {gatewayIp}"
         undoCommand = f"sudo ip route del {destinationIp}/24"
         super().__init__(command, [undoCommand])
+        
+class FlowCommand(BlockingCommand):
+    def __init__(self, match: str, actions:str, priority: int = 1):
+        command = f"sudo ovs-ofctl add-flow ovs-br0 priority={priority},{match},actions={actions}"
+        undoCommand = f"sudo ovs-ofctl del-flow ovs-br0 priority={priority},{match},actions={actions}"
+        super().__init__(command, [])
