@@ -55,8 +55,20 @@ class Command(ABC, threading.Thread):
     
     def undo(self) -> None:
         """This command is run when the script needs to undo all of it's work."""
+        if self.process.poll() is not None:
+            self.process.kill() # Ensure the process itself is terminated
         for command in self.undoCommands:
             UndoCommand(command)
+            
+    @staticmethod
+    def revert() -> None:
+        while len(Command.executedCommands) > 0:
+            command = Command.executedCommands[-1] # fetch last executed command
+            if not isinstance(command, UndoCommand):
+                command.undo()
+            Command.executedCommands.pop()
+                
+                
             
 class BlockingCommand(Command):
     """By its very nature all commands should be blocking, consider using this only for processes where the session can't be closed"""
