@@ -5,18 +5,7 @@ import logging
 import threading
 import shlex
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-ch = logging.StreamHandler()
-
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-
-logger.addHandler(ch)
-
-logger.info("Test")
-
+from .logging import logger
 
 def log_subprocess_output(pipe):
     for line in iter(pipe.readline, b''):
