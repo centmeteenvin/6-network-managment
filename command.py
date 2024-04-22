@@ -24,7 +24,7 @@ class Command(ABC, threading.Thread):
         args = shlex.split(command)
         logger.info(f'Executing {args}')
         self.process = subprocess.Popen(
-            args, shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+            args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.output = []
         self.undoCommands = undoCommands
         self._loggingLevel = 'INFO'
