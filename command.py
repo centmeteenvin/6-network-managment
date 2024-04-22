@@ -74,6 +74,7 @@ class Command(ABC, threading.Thread):
 class BlockingCommand(Command):
     """By its very nature all commands should be blocking, consider using this only for processes where the session can't be closed"""
     def _post_init(self) -> None:
+        print("Blocking")
         self.process.wait()
     
     def _run(self) -> None:
