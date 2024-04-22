@@ -1,9 +1,10 @@
 import argparse
-import os
-import subprocess
 import logging
-import threading
+import os
 import shlex
+import subprocess
+import threading
+import traceback
 
 from command import *
 
@@ -108,5 +109,6 @@ try:
         shouldQuit = input("Type [exit] to exit: ") == "exit"
 
 except Exception as e:
-    logger.fatal(f"Got exception {e}, reverting all commands, {e.with_traceback()}")
+    traceback.print_exc()
+    logger.fatal(f"Got exception {e}, reverting all commands")
     Command.revert()
