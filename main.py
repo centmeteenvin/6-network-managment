@@ -22,7 +22,10 @@ isAP = args.ap
 nodeNr = args.n
 logger.setLevel(args.level)
 others : list[int] = [int(nr) for nr in args.others.split(',')]
-others.remove(nodeNr) # ensure our node number is not present
+try:
+    others.remove(nodeNr) # ensure our node number is not present
+except:
+    pass
 
 ip = "192.168.1." + str(nodeNr)
 try:
