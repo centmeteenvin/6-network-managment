@@ -108,5 +108,5 @@ try:
         shouldQuit = input("Type [exit] to exit: ") == "exit"
 
 except Exception as e:
-    logger.fatal(f"Got exception {e}, reverting all commands")
+    logger.fatal(f"Got exception {e}, reverting all commands, {e.with_traceback()}")
     Command.revert()
