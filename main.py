@@ -71,7 +71,7 @@ try:
     with open("./dnsmasq.conf", "w") as f:
         f.write(content)
 
-    BlockingCommand("sudo docker build –t dhcpimage .")
+    BlockingCommand("sudo docker build –tdhcpimage .")
     BlockingCommand(
         "sudo docker run –itd -v ./dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf --privileged --name dhcp_container dhcpimage",
         undoCommands=["sudo docker stop dhcp_container", "sudo docker container rm dhcp_container"]
@@ -82,7 +82,7 @@ try:
     logger.info("Creating client containers")
     os.chdir("./DockerClient")
     for i in range(2):
-        BlockingCommand("sudo docker build –t clientimage .")
+        BlockingCommand("sudo docker build –tclientimage .")
         BlockingCommand(
             f"sudo docker run –itd --privileged --name client_container{i} clientimage",
             undoCommands=[f"sudo docker stop client_container{i}", f"sudo docker container rm client_container{i}"]
