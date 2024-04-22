@@ -1,4 +1,4 @@
-version: 3.8
+version: "3.8"
 
 services:
   dhcp:
@@ -10,15 +10,15 @@ services:
     
   client1:
     build: ./DockerClient
-    container_name: client1
+    container_name: client_container1
     privileged: True
   
   client2:
     build: ./DockerClient
-    container_name: client2
+    container_name: client_container2
     privileged: True
 
   client3:
     build: ./DockerClient
-    container_name: client3
+    container_name: client_container3
     privileged: True
