@@ -44,7 +44,7 @@ try:
 
     logger.info("Installing packages")
     BlockingCommand("sudo apt update")
-    BlockingCommand("sudo apt install -y docker.io")
+    BlockingCommand("sudo apt install -y docker.io docker-compose-plugin")
     BlockingCommand("sudo apt install -y openvswitch-switch apparmor")
     BlockingCommand(
         "sudo curl https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker -o /usr/bin/ovs-docker")
