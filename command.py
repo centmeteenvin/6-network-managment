@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from .logging import logger
+from logged import logger
 import shlex
 import subprocess
 import threading

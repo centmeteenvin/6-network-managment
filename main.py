@@ -5,7 +5,7 @@ import logging
 import threading
 import shlex
 
-from .command import *
+from command import *
 
 logger.info("Setting up wireless")
 
