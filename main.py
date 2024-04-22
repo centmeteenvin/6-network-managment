@@ -48,6 +48,8 @@ try:
     BlockingCommand("sudo install -m 0755 -d /etc/apt/keyrings")
     BlockingCommand("sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc")
     BlockingCommand("sudo chmod a+r /etc/apt/keyrings/docker.asc")
+    BlockingCommand("sudo apt update")
+
     BlockingCommand("sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin")
     BlockingCommand("sudo apt install -y openvswitch-switch apparmor")
     BlockingCommand(
