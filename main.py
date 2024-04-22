@@ -85,7 +85,7 @@ try:
     with open("./dnsmasq.conf", "w") as f:
         f.write(content)
     os.chdir("../")
-    BlockingCommand("sudo docker compose up --build --detach", ["sudo docker compose down -v"])
+    BackgroundCommand("sudo docker compose up --build", ["sudo docker compose down -v"])
     logger.info("Connecting containers to bridge")
     BlockingCommand(
         f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth0 dhcp_container --ipaddress=192.168.{nodeNr}.2/24 --gateway=192.168.{nodeNr}.1")
