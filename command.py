@@ -99,6 +99,6 @@ class BackgroundCommand(Command):
     
 class StaticRouteCommand(BlockingCommand):
     def __init__(self, destinationIp: str, gatewayIp: str) -> None:
-        command = f"sudo ip route add {destinationIp}/24 via {gatewayIp}"
+        command = f"sudo ip route add {destinationIp} via {gatewayIp}"
         undoCommand = f"sudo ip route del {destinationIp}/24"
         super().__init__(command, [undoCommand])
