@@ -15,11 +15,14 @@ argParser.add_argument("--ap", action="store_true",
 argParser.add_argument(
     "-n", type=int, help="Give number of node", required=True)
 argParser.add_argument("--level", help="Set logging level", default="INFO")
+argParser.add_argument("--others", type=str, help="The other nodes numbers in the network", default="21,23,24,28")
 args = argParser.parse_args()
 
 isAP = args.ap
 nodeNr = args.n
 logger.setLevel(args.level)
+others : list[int] = [int(nr) for nr in args.others.split(',')]
+others.remove(nodeNr) # ensure our node number is not present
 
 ip = "192.168.1." + str(nodeNr)
 try:
@@ -90,6 +93,12 @@ try:
         BlockingCommand(
             f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth{i + 1} client_container{i}")
     logger.info("Finished connecting containers to bridge")
+
+    logger.info("Adding static routes")
+    for otherNode in others:
+        # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
+        gatewayIp = f"192.168.1.{otherNode}"
+        StaticRouteCommand(f"192.168.{otherNode}.0/24", gatewayIp)
 
     shouldQuit = input("Type [exit] to exit: ") == "exit"
     while not shouldQuit:
