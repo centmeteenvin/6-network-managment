@@ -44,17 +44,18 @@ try:
 
     logger.info("Installing packages")
     BlockingCommand("sudo apt update")
-    BlockingCommand("sudo apt-get install -y ca-certificates curl")
-    BlockingCommand("sudo install -m 0755 -d /etc/apt/keyrings")
-    BlockingCommand("sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc")
-    BlockingCommand("sudo chmod a+r /etc/apt/keyrings/docker.asc")
-    BlockingCommand("sudo apt update")
 
-    BlockingCommand("sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin")
+
+    BlockingCommand("sudo apt-get install -y docker.io")
     BlockingCommand("sudo apt install -y openvswitch-switch apparmor")
     BlockingCommand(
         "sudo curl https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker -o /usr/bin/ovs-docker")
     BlockingCommand("sudo chmod +x /usr/bin/ovs-docker")
+    BlockingCommand("DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}")
+    BlockingCommand("mkdir -p $DOCKER_CONFIG/cli-plugins")
+    BlockingCommand("curl -SL https://github.com/docker/compose/releases/download/v2.26.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose")
+    BlockingCommand(" chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose")
+    
     logger.info("Finished installing packages")
 
     ip = f"192.168.{nodeNr}.1"
