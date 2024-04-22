@@ -44,17 +44,24 @@ try:
 
     logger.info("Installing packages")
     BlockingCommand("sudo apt update")
+# Add Docker's official GPG key:
+    BlockingCommand("sudo apt-get -y install ca-certificates curl")
+    BlockingCommand("sudo install -m 0755 -d /etc/apt/keyrings")
+    BlockingCommand("sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc")
+    BlockingCommand("sudo chmod a+r /etc/apt/keyrings/docker.asc")
 
+# Add the repository to Apt sources:
+    BlockingCommand("""echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null""")
+    BlockingCommand("sudo apt-get update")
 
-    BlockingCommand("sudo apt-get install -y docker.io")
+    BlockingCommand(" sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin")
     BlockingCommand("sudo apt install -y openvswitch-switch apparmor")
     BlockingCommand(
         "sudo curl https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker -o /usr/bin/ovs-docker")
     BlockingCommand("sudo chmod +x /usr/bin/ovs-docker")
-    BlockingCommand("DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}")
-    BlockingCommand("mkdir -p $DOCKER_CONFIG/cli-plugins")
-    BlockingCommand("curl -SL https://github.com/docker/compose/releases/download/v2.26.1/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose")
-    BlockingCommand(" chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose")
     
     logger.info("Finished installing packages")
 
