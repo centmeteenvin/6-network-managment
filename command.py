@@ -30,6 +30,7 @@ class Command(ABC, threading.Thread):
         self._loggingLevel = 'INFO'
         Command.executedCommands.append(self)
         self.start()
+        self._post_init()
 
     def readOutput(self) -> None:
         for line in self.process.stdout.readlines():
