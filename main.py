@@ -44,7 +44,11 @@ try:
 
     logger.info("Installing packages")
     BlockingCommand("sudo apt update")
-    BlockingCommand("sudo apt install -y docker.io docker-compose-plugin")
+    BlockingCommand("sudo apt-get install ca-certificates curl")
+    BlockingCommand("sudo install -m 0755 -d /etc/apt/keyrings")
+    BlockingCommand("sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc")
+    BlockingCommand("sudo chmod a+r /etc/apt/keyrings/docker.asc")
+    BlockingCommand("sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin")
     BlockingCommand("sudo apt install -y openvswitch-switch apparmor")
     BlockingCommand(
         "sudo curl https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker -o /usr/bin/ovs-docker")
