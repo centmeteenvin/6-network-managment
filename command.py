@@ -4,6 +4,7 @@ from logged import logger
 import shlex
 import subprocess
 import threading
+import logging
 
 
 class Command(ABC, threading.Thread):
@@ -33,7 +34,7 @@ class Command(ABC, threading.Thread):
     def readOutput(self) -> None:
         for line in self.process.stdout.readlines():
             processedLine = line.decode().strip()
-            logger.log(self._loggingLevel ,processedLine)
+            logger.debug(processedLine)
             self.output.append(processedLine)
     
     @abstractmethod
