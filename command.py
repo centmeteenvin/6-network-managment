@@ -67,8 +67,7 @@ class Command(ABC, threading.Thread):
             if not isinstance(command, UndoCommand):
                 command.undo()
             Command.executedCommands.pop()
-                
-                
+                              
             
 class BlockingCommand(Command):
     """By its very nature all commands should be blocking, consider using this only for processes where the session can't be closed"""
@@ -94,3 +93,9 @@ class BackgroundCommand(Command):
     
     def _run(self) -> None:
         pass
+    
+class StaticRouteCommand(BlockingCommand):
+    def __init__(self, destinationIp: str, gatewayIp: str) -> None:
+        command = f"sudo ip route add {destinationIp}/24 via {gatewayIp}"
+        undoCommand = f"sudo ip route del {destinationIp}/24"
+        super().__init__(command, [undoCommand])
