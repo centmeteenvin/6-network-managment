@@ -70,25 +70,8 @@ try:
 
     with open("./dnsmasq.conf", "w") as f:
         f.write(content)
-
-    BlockingCommand("sudo docker build –tdhcpimage .")
-    BlockingCommand(
-        "sudo docker run –itd -v ./dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf --privileged --name dhcp_container dhcpimage",
-        undoCommands=["sudo docker stop dhcp_container", "sudo docker container rm dhcp_container"]
-        )
     os.chdir("../")
-    logger.info("Finished creating dhcp container")
-
-    logger.info("Creating client containers")
-    os.chdir("./DockerClient")
-    for i in range(2):
-        BlockingCommand("sudo docker build –tclientimage .")
-        BlockingCommand(
-            f"sudo docker run –itd --privileged --name client_container{i} clientimage",
-            undoCommands=[f"sudo docker stop client_container{i}", f"sudo docker container rm client_container{i}"]
-            )
-    logger.info("Finished creating client containers")
-
+    BlockingCommand("sudo docker compose up --build --detach", ["sudo docker compose down -v"])
     logger.info("Connecting containers to bridge")
     BlockingCommand(
         f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth0 dhcp_container --ipaddress=192.168.{nodeNr}.2/24 --gateway=192.168.{nodeNr}.1")

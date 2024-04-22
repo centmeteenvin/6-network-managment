@@ -1,0 +1,24 @@
+version: 3.8
+
+services:
+  dhcp:
+    build: ./DockerAP
+    container_name: dhcp_container
+    privileged: True
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf
+    
+  client1:
+    build: ./DockerClient
+    container_name: client1
+    privileged: True
+  
+  client2:
+    build: ./DockerClient
+    container_name: client2
+    privileged: True
+
+  client3:
+    build: ./DockerClient
+    container_name: client3
+    privileged: True
