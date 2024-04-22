@@ -24,3 +24,6 @@ Additional information can be found by running
 ```
 sudo python main.py --help
 ```
+
+## Updating
+A simple update script `update.sh` has been provided.
