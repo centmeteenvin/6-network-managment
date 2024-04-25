@@ -100,9 +100,6 @@ class UndoCommand(BlockingCommand):
         pass
     
 class BackgroundCommand(Command):
-    def __init__(self, command: str, undoCommands: list[str] = None, loggingLevel = 'DEBUG') -> None:
-        super().__init__(command, undoCommands, loggingLevel=loggingLevel)
-        self._loggingLevel = loggingLevel
     
     def _post_init(self) -> None:
         pass
