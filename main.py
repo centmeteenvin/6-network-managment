@@ -105,8 +105,9 @@ try:
     while not shouldQuit:
         shouldQuit = input("Type [exit] to exit: ") == "exit"
         if shouldQuit:
-            raise Exception("END")
+            break
 except Exception as e:
     traceback.print_exc()
-    logger.fatal(f"Got exception {e}, reverting all commands")
-    Command.revert()
+    logger.fatal(f"Got exception {e}")
+logger.info(f"Shutting down, reverting all commands")
+Command.revert()
