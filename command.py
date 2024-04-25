@@ -18,10 +18,13 @@ class Command(ABC, threading.Thread):
     executedCommands: list[Command] = []
  
  
-    def __init__(self, command: str, undoCommands : list[str] = [], loggingLevel = 'DEBUG', shell = False) -> None:
+    def __init__(self, command: str, undoCommands : list[str] = [], loggingLevel = 'DEBUG', shell = False, split=True) -> None:
         ABC.__init__(self)
         threading.Thread.__init__(self)
-        self.args = shlex.split(command)
+        if split:
+            self.args = shlex.split(command)
+        else:
+            self.args = [command]
         loggerName = ""
         if self.args[0] == "sudo":
             loggerName += f"{self.args[1]}-{self.args[2]}"

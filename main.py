@@ -36,10 +36,10 @@ try:
         BackgroundCommand("hostapd ./hostapd.conf", loggingLevel='DEBUG')
     else:
         BlockingCommand(
-            "sudo wpa_passphrase demoNN passwordNN > ./wpa_supplicant.conf", shell=True)
+            "sudo wpa_passphrase demoNN passwordNN > ./wpa_supplicant.conf", shell=True, split=False)
         BlockingCommand("sudo iwconfig wlp1s0 mode managed")
         BackgroundCommand(
-            "sudo wpa_supplicant -i wlp1s0 -c ./wpa_supplicant.conf", loggingLevel='DEBUG')
+            "sudo wpa_supplicant -i wlp1s0 -c wpa_supplicant.conf", loggingLevel='DEBUG')
     BlockingCommand(f"sudo ifconfig wlp1s0 {ip}/24")
 
     logger.info("Finished setting up wireless")
