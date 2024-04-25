@@ -1,5 +1,6 @@
 import argparse
 from logged import logger
+from template import replaceInTemplateFile
 import os
 import shlex
 import subprocess
@@ -76,15 +77,7 @@ try:
     logger.info("Finished setting up OpenVSwitch")
 
     logger.info("Creating dhcp container")
-    os.chdir("./DockerAP")
-
-    with open("./dnsmasq.conf.template", "r") as f:
-        content = f.read()
-        content = content.replace("$", str(nodeNr))
-
-    with open("./dnsmasq.conf", "w") as f:
-        f.write(content)
-    os.chdir("../")
+    replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {"$": str(nodeNr)})
     BlockingCommand("sudo docker compose up --build --detach", ["sudo docker compose down -v"])
     logger.info("Connecting containers to bridge")
     BlockingCommand(
