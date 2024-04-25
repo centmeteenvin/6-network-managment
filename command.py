@@ -26,7 +26,9 @@ class Command(ABC, threading.Thread):
         else:
             self.args = [command]
         loggerName = ""
-        if self.args[0] == "sudo":
+        if len(self.args) :
+            loggerName += command
+        elif self.args[0] == "sudo":
             loggerName += f"{self.args[1]}-{self.args[2]}"
         else:
             loggerName += f"{self.args[0]}-{self.args[1]}"
