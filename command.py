@@ -18,7 +18,7 @@ class Command(ABC, threading.Thread):
     executedCommands: list[Command] = []
  
  
-    def __init__(self, command: str, undoCommands : list[str] = None) -> None:
+    def __init__(self, command: str, undoCommands : list[str] = None, loggingLevel = 'DEBUG') -> None:
         ABC.__init__(self)
         threading.Thread.__init__(self)
         self.args = shlex.split(command)
@@ -29,6 +29,7 @@ class Command(ABC, threading.Thread):
             loggerName += f"{self.args[0]}-{self.args[1]}"
         self.logger = logging.getLogger(loggerName)
         self.logger.addHandler(ch)
+        self.logger.setLevel(loggingLevel)
         self.logger.info(f'Executing {self.args}')
         self.process = subprocess.Popen(
             self.args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -97,7 +98,7 @@ class UndoCommand(BlockingCommand):
     
 class BackgroundCommand(Command):
     def __init__(self, command: str, undoCommands: list[str] = None, loggingLevel = 'DEBUG') -> None:
-        super().__init__(command, undoCommands)
+        super().__init__(command, undoCommands, loggingLevel=loggingLevel)
         self._loggingLevel = loggingLevel
     
     def _post_init(self) -> None:
@@ -107,13 +108,13 @@ class BackgroundCommand(Command):
         pass
     
 class StaticRouteCommand(BlockingCommand):
-    def __init__(self, destinationIp: str, gatewayIp: str) -> None:
+    def __init__(self, destinationIp: str, gatewayIp: str, loggingLevel = 'DEBUG') -> None:
         command = f"sudo ip route add {destinationIp} via {gatewayIp}"
         undoCommand = f"sudo ip route del {destinationIp}/24"
-        super().__init__(command, [undoCommand])
+        super().__init__(command, [undoCommand], loggingLevel=loggingLevel)
         
 class FlowCommand(BlockingCommand):
     def __init__(self, match: str, actions:str, priority: int = 1):
         command = f"sudo ovs-ofctl add-flow ovs-br0 priority={priority},{match},actions={actions}"
         undoCommand = f"sudo ovs-ofctl del-flow ovs-br0 priority={priority},{match},actions={actions}"
-        super().__init__(command, [])
+        super().__init__(command, [], loggingLevel="DEBUG")

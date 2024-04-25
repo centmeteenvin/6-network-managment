@@ -22,7 +22,8 @@ args = argParser.parse_args()
 
 isAP = args.ap
 nodeNr = args.n
-logger.setLevel(args.level)
+level = args.level
+logger.setLevel(level)
 others : list[int] = [int(nr) for nr in args.others.split(',')]
 try:
     others.remove(nodeNr) # ensure our node number is not present
