@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from logged import logger
+from logged import ch
 import shlex
 import subprocess
 import threading
@@ -22,7 +22,14 @@ class Command(ABC, threading.Thread):
         ABC.__init__(self)
         threading.Thread.__init__(self)
         args = shlex.split(command)
-        logger.info(f'Executing {args}')
+        loggerName = ""
+        if args[0] == "sudo":
+            loggerName += f"{args[1]}-{args[2]}"
+        else:
+            loggerName += f"{args[0]}-{args[1]}"
+        self.logger = logging.getLogger(loggerName)
+        self.logger.addHandler(ch)
+        self.logger.info(f'Executing {args}')
         self.process = subprocess.Popen(
             args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.output = []
@@ -35,7 +42,7 @@ class Command(ABC, threading.Thread):
     def readOutput(self) -> None:
         for line in self.process.stdout.readlines():
             processedLine = line.decode().strip()
-            logger.debug(processedLine)
+            self.logger.debug(processedLine)
             self.output.append(processedLine)
     
     @abstractmethod
