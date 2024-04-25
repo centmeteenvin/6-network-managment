@@ -80,6 +80,7 @@ class Command(ABC, threading.Thread):
             if not isinstance(command, UndoCommand):
                 logger.debug(f"The command was not an undo command so we are running it's undo command")
                 command.undo()
+            logger.debug(f"The current remaining commands are {Command.executedCommands}")
             Command.executedCommands.pop()
             logger.debug(f"Popped command, the amount of remaining commands is {len(Command.executedCommands)}")
                               
