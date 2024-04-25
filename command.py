@@ -18,7 +18,7 @@ class Command(ABC, threading.Thread):
     executedCommands: list[Command] = []
  
  
-    def __init__(self, command: str, undoCommands : list[str] = None, loggingLevel = 'DEBUG', shell = False) -> None:
+    def __init__(self, command: str, undoCommands : list[str] = [], loggingLevel = 'DEBUG', shell = False) -> None:
         ABC.__init__(self)
         threading.Thread.__init__(self)
         self.args = shlex.split(command)
