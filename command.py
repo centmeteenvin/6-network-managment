@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from logged import ch
+from logged import ch, logger
 import shlex
 import subprocess
 import threading
@@ -65,9 +65,9 @@ class Command(ABC, threading.Thread):
     
     def undo(self) -> None:
         """This command is run when the script needs to undo all of it's work."""
-        if self.process.poll() is not None:
+        if self.process.poll() is None:
             self.logger.info("While undoing this command, the process had not finished yet, killing it now")
-            self.process.kill() # Ensure the process itself is terminated
+            self.process.kill() # Ensure the process itself is terminated 
         for command in self.undoCommands:
             self.logger.info(f"running {command} to undo {self.args}")
             UndoCommand(command)
@@ -76,9 +76,12 @@ class Command(ABC, threading.Thread):
     def revert() -> None:
         while len(Command.executedCommands) > 0:
             command = Command.executedCommands[-1] # fetch last executed command
+            logger.info(f"The command we are inspecting is {command}")
             if not isinstance(command, UndoCommand):
+                logger.debug(f"The command was not an undo command so we are running it's undo command")
                 command.undo()
             Command.executedCommands.pop()
+            logger.debug(f"Popped command, the amount of remaining commands is {len(Command.executedCommands)}")
                               
             
 class BlockingCommand(Command):
