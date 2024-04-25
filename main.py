@@ -33,7 +33,7 @@ except:
 ip = "192.168.1." + str(nodeNr)
 try:
     if isAP:
-        BackgroundCommand("hostapd ./hostapd.conf", loggingLevel='DEBUG')
+        BackgroundCommand("sudo hostapd ./hostapd.conf", loggingLevel='DEBUG')
     else:
         BlockingCommand(
             "sudo wpa_passphrase demoNN passwordNN > ./wpa_supplicant.conf", shell=True, split=False)
