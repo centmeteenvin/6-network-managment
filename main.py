@@ -1,5 +1,5 @@
 import argparse
-import logging
+from logged import logger
 import os
 import shlex
 import subprocess

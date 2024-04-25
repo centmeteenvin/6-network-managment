@@ -21,17 +21,17 @@ class Command(ABC, threading.Thread):
     def __init__(self, command: str, undoCommands : list[str] = None) -> None:
         ABC.__init__(self)
         threading.Thread.__init__(self)
-        args = shlex.split(command)
+        self.args = shlex.split(command)
         loggerName = ""
-        if args[0] == "sudo":
-            loggerName += f"{args[1]}-{args[2]}"
+        if self.args[0] == "sudo":
+            loggerName += f"{self.args[1]}-{self.args[2]}"
         else:
-            loggerName += f"{args[0]}-{args[1]}"
+            loggerName += f"{self.args[0]}-{self.args[1]}"
         self.logger = logging.getLogger(loggerName)
         self.logger.addHandler(ch)
-        self.logger.info(f'Executing {args}')
+        self.logger.info(f'Executing {self.args}')
         self.process = subprocess.Popen(
-            args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+            self.args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.output = []
         self.undoCommands = undoCommands
         self._loggingLevel = 'INFO'
@@ -65,8 +65,10 @@ class Command(ABC, threading.Thread):
     def undo(self) -> None:
         """This command is run when the script needs to undo all of it's work."""
         if self.process.poll() is not None:
+            self.logger.info("While undoing this command, the process had not finished yet, killing it now")
             self.process.kill() # Ensure the process itself is terminated
         for command in self.undoCommands:
+            self.logger.info(f"running {command} to undo {self.args}")
             UndoCommand(command)
             
     @staticmethod
