@@ -110,7 +110,7 @@ class BackgroundCommand(Command):
 class StaticRouteCommand(BlockingCommand):
     def __init__(self, destinationIp: str, gatewayIp: str, loggingLevel = 'DEBUG') -> None:
         command = f"sudo ip route add {destinationIp} via {gatewayIp}"
-        undoCommand = f"sudo ip route del {destinationIp}/24"
+        undoCommand = f"sudo ip route del {destinationIp}"
         super().__init__(command, [undoCommand], loggingLevel=loggingLevel)
         
 class FlowCommand(BlockingCommand):
