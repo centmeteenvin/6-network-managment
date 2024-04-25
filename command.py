@@ -18,7 +18,7 @@ class Command(ABC, threading.Thread):
     executedCommands: list[Command] = []
  
  
-    def __init__(self, command: str, undoCommands : list[str] = None, loggingLevel = 'DEBUG') -> None:
+    def __init__(self, command: str, undoCommands : list[str] = None, loggingLevel = 'DEBUG', shell = False) -> None:
         ABC.__init__(self)
         threading.Thread.__init__(self)
         self.args = shlex.split(command)
@@ -32,7 +32,7 @@ class Command(ABC, threading.Thread):
         self.logger.setLevel(loggingLevel)
         self.logger.info(f'Executing {self.args}')
         self.process = subprocess.Popen(
-            self.args, shell=False, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+            self.args, shell=shell, stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
         self.output = []
         self.undoCommands = undoCommands
         self._loggingLevel = 'INFO'
@@ -75,14 +75,13 @@ class Command(ABC, threading.Thread):
     @staticmethod
     def revert() -> None:
         while len(Command.executedCommands) > 0:
-            command = Command.executedCommands[-1] # fetch last executed command
+            command = Command.executedCommands.pop() # fetch last executed command
             logger.info(f"The command we are inspecting is {command}")
             if not isinstance(command, UndoCommand):
                 logger.debug(f"The command was not an undo command so we are running it's undo command")
                 command.undo()
             logger.debug(f"The current remaining commands are {Command.executedCommands}")
-            Command.executedCommands.pop()
-            logger.debug(f"Popped command, the amount of remaining commands is {len(Command.executedCommands)}")
+
                               
             
 class BlockingCommand(Command):
