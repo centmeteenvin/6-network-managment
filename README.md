@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - root privileges
-- python3
+- python3.10 [Ubuntu Install Guide](https://gist.github.com/rutcreate/c0041e842f858ceb455b748809763ddb)
 - git
 
 ## How to use
