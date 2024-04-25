@@ -78,6 +78,7 @@ try:
 
     logger.info("Creating dhcp container")
     replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {"$": str(nodeNr)})
+    replaceInTemplateFile("./docker-compose.yaml.template", {"$": str(nodeNr)})
     BlockingCommand("sudo docker compose up --build --detach", ["sudo docker compose down -v"])
     logger.info("Connecting containers to bridge")
     BlockingCommand(

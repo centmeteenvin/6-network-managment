@@ -10,7 +10,7 @@ services:
       - ./dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf
     networks:
       default:
-        ipv4_address: 192.168.24.2
+        ipv4_address: 192.168.$.2
     
   client1:
     build: ./DockerClient
