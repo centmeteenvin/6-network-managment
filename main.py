@@ -74,9 +74,9 @@ try:
     dockerComposition = DockerCompose()
     containers = dockerComposition.up("--build --detach")
     dhcpContainer : DockerContainer = containers['dhcp_container']
-    client1 : DockerContainer = containers['client1']
-    client2 : DockerContainer = containers['client2']
-    client3 : DockerContainer = containers['client3']
+    client1 : DockerContainer = containers['client_container1']
+    client2 : DockerContainer = containers['client_container2']
+    client3 : DockerContainer = containers['client_container3']
     clients : tuple[DockerContainer]= (client1, client2, client3)
     logger.info("Connecting containers to bridge")
     bridge.addContainer(dhcpContainer, 'eth0', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
