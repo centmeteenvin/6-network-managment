@@ -12,19 +12,19 @@ services:
   client1:
     build: ./DockerClient
     container_name: client_container1
-    privileged: True
+    privileged: False
     tty: True
 
   
   client2:
     build: ./DockerClient
     container_name: client_container2
-    privileged: True
+    privileged: False
     tty: True
 
 
   client3:
     build: ./DockerClient
     container_name: client_container3
-    privileged: True
+    privileged: False
     tty: True
