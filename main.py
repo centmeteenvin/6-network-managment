@@ -95,6 +95,7 @@ try:
     logger.info("Fetching ip addresses for clients")
     for client in clients:
         client.exec("dhclient eth1")
+        client.exec("dhclient eth1")
     logger.info("Adding static routes")
     for otherNode in others:
         # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
