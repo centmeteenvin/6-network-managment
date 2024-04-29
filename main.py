@@ -1,10 +1,7 @@
 import argparse
 from logged import logger
-from template import replaceInTemplateFile
-import os
-import shlex
+from object import DockerContainer, DockerCompose, OVSBridge
 import subprocess
-import threading
 import traceback
 
 from command import *
@@ -65,28 +62,36 @@ try:
     logger.info("Finished installing packages")
 
     ip = f"192.168.{nodeNr}.1"
-
+    bridge = 'ovs-br0'
     logger.info("Setting up OpenVSwitch")
-    BlockingCommand("sudo ovs-vsctl add-br ovs-br0",
-                    undoCommands=["sudo ovs-vsctl del-br ovs-br0"])
-    BlockingCommand(f"sudo ip a a {ip}/24 dev ovs-br0")
-    BlockingCommand("sudo ip l s ovs-br0 up")
+    bridge = OVSBridge('ovs-br0')
+    bridge.ip = f"192.168.{nodeNr}.1/24"
+
     BlockingCommand("sudo sysctl -w net.ipv4.ip_forward=1")
     logger.info("Finished setting up OpenVSwitch")
 
     logger.info("Creating dhcp container")
-    replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {"$": str(nodeNr)})
-    replaceInTemplateFile("./docker-compose.yaml.template", {"$": str(nodeNr)})
-    BlockingCommand("sudo docker compose up --build --detach", ["sudo docker compose down -v"])
+    dockerComposition = DockerCompose()
+    containers = dockerComposition.up()
+    dhcpContainer : DockerContainer = containers['dhcp_container']
+    client1 : DockerContainer = containers['client1']
+    client2 : DockerContainer = containers['client2']
+    client3 : DockerContainer = containers['client3']
+    clients : tuple[DockerContainer]= (client1, client2, client3)
     logger.info("Connecting containers to bridge")
-    BlockingCommand(
-        f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth0 dhcp_container --ipaddress=192.168.{nodeNr}.2/24 --gateway=192.168.{nodeNr}.1")
+    bridge.addContainer(dhcpContainer, 'eth0', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
+    
+    for i, client in enumerate(clients):
+        bridge.addContainer(client, f'eth{i+1}')
 
-    for i in range(2):
-        BlockingCommand(
-            f"sudo /usr/bin/ovs-docker add-port ovs-br0 eth{i + 1} client_container{i + 1}")
     logger.info("Finished connecting containers to bridge")
 
+    logger.info("Starting dhcp server")
+    dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf")
+
+    logger.info("Fetching ip addresses for clients")
+    # for client in clients:
+    #     client.exec("")
     logger.info("Adding static routes")
     for otherNode in others:
         # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway

@@ -118,6 +118,12 @@ class StaticRouteCommand(BlockingCommand):
         undoCommand = f"sudo ip route del {destinationIp}"
         super().__init__(command, [undoCommand], loggingLevel=loggingLevel)
         
+class OVSAddPortCommand(BlockingCommand):
+    def __init__(self, bridge: str, port: str, container: str, staticIp: str | None = None, gateway: str | None = None, loggingLevel='DEBUG', shell=False, split=True) -> None:
+        command = f"sudo /usr/bin/ovs-docker add-port {bridge} {port} {container}{f'--ipaddress={staticIp}' if staticIp is not None else ''} {f'--gateway={gateway}' if gateway is not None else ''}"
+        undoCommand = f"sudo /user/bin/ovs-docker del-port {bridge} {port} {container}"
+        super().__init__(command, [undoCommand], loggingLevel, shell, split)
+
 class FlowCommand(BlockingCommand):
     def __init__(self, match: str, actions:str, priority: int = 1):
         command = f"sudo ovs-ofctl add-flow ovs-br0 priority={priority},{match},actions={actions}"
