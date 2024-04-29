@@ -89,7 +89,7 @@ try:
     logger.info("Finished connecting containers to bridge")
 
     logger.info("Starting dhcp server")
-    dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf")
+    dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf", tty=False)
 
     logger.info("Fetching ip addresses for clients")
     # for client in clients:
