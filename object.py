@@ -60,7 +60,7 @@ class OVSBridge():
     @ip.setter
     def ip(self, ipAddressWithSN: str) -> None:
         self._ip =ipAddressWithSN
-        BlockingCommand(f"sudo ip a a {self._ip}/24 dev {self.name}")
+        BlockingCommand(f"sudo ip a a {self._ip} dev {self.name}")
         BlockingCommand(f"sudo ip l s {self.name} up")
         
     def addContainer(self, container: DockerContainer, port: str, staticIpWithSN: str | None = None, gateway: str | None = None) -> None:
