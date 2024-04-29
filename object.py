@@ -30,7 +30,7 @@ class DockerCompose:
         dockerComposeFile = replaceInTemplateFile('./docker-compose.yaml.template', self.replaceDict)
         upCommand = f"docker compose up {args}" 
         downCommand = f"docker compose down"
-        BackgroundCommand(upCommand, [downCommand])
+        BlockingCommand(upCommand, [downCommand])
         yamlDict = None
         with open(dockerComposeFile, 'r') as file:
             yamlDict = yaml.safe_load(file)
