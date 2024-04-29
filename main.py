@@ -30,7 +30,7 @@ except:
 
 ip = "192.168.1." + str(nodeNr)
 try:
-    replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {'$': nodeNr})
+    replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {'$': str(nodeNr)})
     if isAP:
         BackgroundCommand("sudo hostapd ./hostapd.conf", loggingLevel='DEBUG')
     else:
