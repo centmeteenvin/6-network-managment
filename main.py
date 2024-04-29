@@ -1,4 +1,5 @@
 import argparse
+from time import sleep
 from logged import logger
 from object import DockerContainer, DockerCompose, OVSBridge
 import subprocess
@@ -89,11 +90,11 @@ try:
     logger.info("Finished connecting containers to bridge")
 
     logger.info("Starting dhcp server")
-    dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf", tty=False)
-
+    dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf", tty=False, blocking=False)
+    sleep(5)
     logger.info("Fetching ip addresses for clients")
-    # for client in clients:
-    #     client.exec("")
+    for client in clients:
+        client.exec("dhclient eth1")
     logger.info("Adding static routes")
     for otherNode in others:
         # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
