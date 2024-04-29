@@ -82,7 +82,7 @@ try:
     bridge.addContainer(dhcpContainer, 'eth0', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
     
     for i, client in enumerate(clients):
-        bridge.addContainer(client, f'eth{i+1}')
+        bridge.addContainer(client, f'eth0')
 
     logger.info("Finished connecting containers to bridge")
 
