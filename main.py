@@ -72,7 +72,7 @@ try:
 
     logger.info("Creating dhcp container")
     dockerComposition = DockerCompose()
-    containers = dockerComposition.up()
+    containers = dockerComposition.up("--build --detach")
     dhcpContainer : DockerContainer = containers['dhcp_container']
     client1 : DockerContainer = containers['client1']
     client2 : DockerContainer = containers['client2']
