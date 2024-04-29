@@ -79,10 +79,10 @@ try:
     client3 : DockerContainer = containers['client_container3']
     clients : tuple[DockerContainer]= (client1, client2, client3)
     logger.info("Connecting containers to bridge")
-    bridge.addContainer(dhcpContainer, 'eth0', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
+    bridge.addContainer(dhcpContainer, 'eth1', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
     
     for i, client in enumerate(clients):
-        bridge.addContainer(client, f'eth0')
+        bridge.addContainer(client, f'eth1')
 
     logger.info("Finished connecting containers to bridge")
 
