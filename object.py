@@ -8,7 +8,7 @@ class DockerContainer:
         self.name = name
         self.ovsPort : str | None = None
         
-    def exec(self, command: str, blocking = True, tty = True) -> None:
+    def exec(self, command: str, blocking = True, tty = False) -> None:
         """Execute the given command inside this docker container, if blocking is False the command will run in the background"""
         execCommand = f"sudo docker exec -i{'t' if tty else ''} {self.name} {command}"
         if blocking:
