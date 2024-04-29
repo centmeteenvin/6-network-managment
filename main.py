@@ -3,6 +3,7 @@ from logged import logger
 from object import DockerContainer, DockerCompose, OVSBridge
 import subprocess
 import traceback
+from template import replaceInTemplateFile
 
 from command import *
 
@@ -29,6 +30,7 @@ except:
 
 ip = "192.168.1." + str(nodeNr)
 try:
+    replaceInTemplateFile("./DockerAP/dnsmasq.conf.template", {'$': nodeNr})
     if isAP:
         BackgroundCommand("sudo hostapd ./hostapd.conf", loggingLevel='DEBUG')
     else:
