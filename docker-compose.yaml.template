@@ -7,7 +7,7 @@ services:
     privileged: True
     tty: True
     volumes:
-      - ./DockerAP/dnsmasq.conf:/etc/dnsmasq.d/dnsmasq.conf
+      - ./DockerAP/:/etc/dnsmasq.d/
     
   client1:
     build: ./DockerClient
