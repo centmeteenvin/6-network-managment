@@ -1,4 +1,4 @@
-interface=eth0
+interface=eth1
 # Define the interface it should listen to
 bind-interfaces
 # Will bind the services to the defined interface
