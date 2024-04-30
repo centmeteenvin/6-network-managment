@@ -9,6 +9,7 @@ class DockerContainer:
         self.ovsPort : str | None = None
         self._DGW : str = "" 
         self.VLAN : int = 0
+        self._ipWithSN : str = ""
         
     def exec(self, command: str, blocking = True, tty = False) -> None:
         """Execute the given command inside this docker container, if blocking is False the command will run in the background"""
@@ -28,11 +29,31 @@ class DockerContainer:
         self.exec(f"ip route add default via {ip}")
         self._DGW = ip
         
+    @property
+    def ip(self) -> str:
+        """Returns the ip with SNM of the ovsPort"""
+        return self._ipWithSN
 
+    @ip.setter
+    def ip(self, ipWithSN: str) -> None:
+        """Set the ip address on the containers ovsPort"""
+        self.exec(f"ip address add {ipWithSN} dev {self.ovsPort}")
+        self._ipWithSN = ipWithSN
+        
     def dhclient(self) -> None:
         """Run the dhclient command on the container for the ovs-port, will run even if the command is not available"""
         self.exec(f"dhclient {self.ovsPort}") # Execute the command twice because the first time it will fail.
         self.exec(f"dhclient {self.ovsPort}")
+        
+    def __repre__(self) -> str:
+        return f"""
+    {10*'='} Docker Container {10*'='}
+    name: {self.name}
+    ovsPort: {self.name}
+    VLAN: {self.VLAN}
+    DGW: {self.DGW}
+    
+    """
             
 class DockerCompose:
     def __init__(self, replaceDict: dict = {}) -> None:
