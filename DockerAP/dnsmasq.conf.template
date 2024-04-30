@@ -8,7 +8,7 @@ dhcp-option=3,8.8.8.8
 # Define the default gateway
 dhcp-option=6,192.168.$.1
 # Define the DNS server clients should use
-dhcp-range=192.168.$.100,192.168.$.200, 300s
+dhcp-range=192.168.$.100,192.168.$.200, 3600s
 dhcp-leasefile=/tmp/dnsmasq.leases
 dhcp-authoritative
 
