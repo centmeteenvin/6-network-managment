@@ -13,8 +13,11 @@ sudo python main.py -n <nodeNr> --others <other node numbers as comma separated 
 ```
 
 Additionally we can apply the following extra parameters:
-- `--level`: This sets the logging level, 'INFO' by default
-- `--ap`: Indicate if the node should behave as an acces point 
+- `--level` : This sets the logging level, 'INFO' by default.
+- `--ap`    : Indicate if the node should behave as an acces point .
+- `--others`: Identify the other nodes in the network. This is used to setup the static routing.
+- `--snm`   : The subnet masker for the entire setup, defaults to /24.
+- `--static`: Set static ip's for the containers, otherwise DHCP will be used following the ./DockerAP/dnsmasq.conf.template specifications.
 
 ### Example usage
 `sudo python main.py --ap -n 24 --other "21,22,28" --level DEBUG`
