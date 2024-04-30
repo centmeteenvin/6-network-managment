@@ -9,22 +9,22 @@ services:
     volumes:
       - ./DockerAP/:/etc/dnsmasq.d/
     
-  client1:
+  main:
     build: ./DockerClient
-    container_name: client_container1
+    container_name: main_container
     privileged: True
     tty: True
 
   
-  client2:
+  ping:
     build: ./DockerClient
-    container_name: client_container2
+    container_name: ping_container
     privileged: True
     tty: True
 
 
-  client3:
+  st:
     build: ./DockerClient
-    container_name: client_container3
+    container_name: st_container
     privileged: True
     tty: True

@@ -17,6 +17,7 @@ argParser.add_argument(
     "-n", type=int, help="Give number of node", required=True)
 argParser.add_argument("--level", help="Set logging level", default="INFO")
 argParser.add_argument("--others", type=str, help="The other nodes numbers in the network", default="21,23,24,28")
+argParser.add_argument("--VLAN", action="store_true", help="If the client containers should be separated into different VLAN's")
 args = argParser.parse_args()
 
 isAP = args.ap
@@ -77,10 +78,10 @@ try:
     dockerComposition = DockerCompose()
     containers = dockerComposition.up("--build --detach")
     dhcpContainer : DockerContainer = containers['dhcp_container']
-    client1 : DockerContainer = containers['client_container1']
-    client2 : DockerContainer = containers['client_container2']
-    client3 : DockerContainer = containers['client_container3']
-    clients : tuple[DockerContainer]= (client1, client2, client3)
+    mainContainer : DockerContainer = containers['main_container']
+    pingContainer : DockerContainer = containers['ping_container']
+    stContainer : DockerContainer = containers['st_container']
+    clients : tuple[DockerContainer]= (mainContainer, pingContainer, stContainer)
     logger.info("Connecting containers to bridge")
     bridge.addContainer(dhcpContainer, 'eth1', staticIpWithSN=f'192.168.{nodeNr}.2/24', gateway=f'192.168.{nodeNr}.1')
     
