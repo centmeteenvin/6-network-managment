@@ -7,6 +7,8 @@ class DockerContainer:
     def __init__(self, name) -> None:
         self.name = name
         self.ovsPort : str | None = None
+        self._DGW : str = "" 
+        self.VLAN : int = 0
         
     def exec(self, command: str, blocking = True, tty = False) -> None:
         """Execute the given command inside this docker container, if blocking is False the command will run in the background"""
@@ -15,6 +17,22 @@ class DockerContainer:
             BlockingCommand(execCommand)
         else:
             BackgroundCommand(execCommand)
+            
+    @property
+    def DGW(self) -> str:
+        return self._DGW
+    
+    @DGW.setter
+    def DGW(self, ip: str) -> None:
+        self.exec("ip route del default")
+        self.exec(f"ip route add default via {ip}")
+        self._DGW = ip
+        
+
+    def dhclient(self) -> None:
+        """Run the dhclient command on the container for the ovs-port, will run even if the command is not available"""
+        self.exec(f"dhclient {self.ovsPort}") # Execute the command twice because the first time it will fail.
+        self.exec(f"dhclient {self.ovsPort}")
             
 class DockerCompose:
     def __init__(self, replaceDict: dict = {}) -> None:
@@ -69,7 +87,7 @@ class OVSBridge():
         It will also set the container ovsPort value and add the container with the port to self.portMapping.
         """
         container.ovsPort = port
-        self.portMapping[port] = container
+        self.portMapping[container.name] = container
         OVSAddPortCommand(
             bridge=self.name,
             port=port,
@@ -77,4 +95,8 @@ class OVSBridge():
             staticIp=staticIpWithSN,
             gateway=gateway
         )
+        
+    def setVLAN(self, container: DockerContainer, tag: int) -> None:
+        BlockingCommand(f"sudo ovs-docker set-vlan {self.name} {container.ovsPort} {container.name} {tag}")
+        container.VLAN = tag
     

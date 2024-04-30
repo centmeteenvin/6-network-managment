@@ -94,10 +94,8 @@ try:
     sleep(5)
     logger.info("Fetching ip addresses for clients")
     for client in clients:
-        client.exec("dhclient eth1")
-        client.exec("dhclient eth1")
-        client.exec("ip route del default")
-        client.exec(f"ip route add default via 192.168.{nodeNr}.1")
+        client.dhclient()
+        client.DGW = f"192.168.{nodeNr}.1"
     logger.info("Adding static routes")
     for otherNode in others:
         # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
