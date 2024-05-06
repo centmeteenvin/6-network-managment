@@ -114,8 +114,8 @@ try:
     else:
         # Set the static ip's on the containers
         logger.info("Setting static ip's for containers")
-        for i, client in enumerate(clients):
-            client.ip = f"192.168.{nodeNr}.{i+3}/{snm}" # start from .3 upwards
+        for client, staticIp in zip(clients, staticIps):
+            client.ip = f"192.168.{nodeNr}.{staticIp}/{snm}" # start from .3 upwards
         
     if shouldVLAN:
         logger.info("Separating containers into VLANs")
