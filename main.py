@@ -114,7 +114,7 @@ try:
     bridge.setVLAN(routeContainer, 2, salesPort)
     bridge.setVLAN(SalesContainer, 2, 'eth1')
     bridge.setVLAN(routeContainer, 3, visitorsPort)
-    bridge.setVLAN(managementContainer, 3, 'eth1')
+    bridge.setVLAN(VisitorsContainer, 3, 'eth1')
     
     # if staticIps is None:
     #     # Running DHCP before VLAN to assign ip's

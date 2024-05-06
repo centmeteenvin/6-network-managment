@@ -109,6 +109,8 @@ class OVSBridge():
         """
         container.ovsPort = port
         self.portMapping[container.name] = container
+        if gateway is not None:
+            container._DGW = gateway
         OVSAddPortCommand(
             bridge=self.name,
             port=port,
