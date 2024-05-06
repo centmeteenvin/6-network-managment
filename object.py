@@ -45,7 +45,7 @@ class DockerContainer:
         self.exec(f"dhclient {self.ovsPort}") # Execute the command twice because the first time it will fail.
         self.exec(f"dhclient {self.ovsPort}")
         
-    def __repre__(self) -> str:
+    def __repr__(self) -> str:
         return f"""
     {10*'='} Docker Container {10*'='}
     name: {self.name}
