@@ -84,48 +84,69 @@ try:
     logger.info("Creating dhcp container")
     dockerComposition = DockerCompose()
     containers = dockerComposition.up("--build --detach")
-    dhcpContainer : DockerContainer = containers['dhcp_container']
-    mainContainer : DockerContainer = containers['main_container']
-    pingContainer : DockerContainer = containers['ping_container']
-    stContainer : DockerContainer = containers['st_container']
-    clients : tuple[DockerContainer]= (mainContainer, pingContainer, stContainer)
+    routeContainer : DockerContainer = containers['route_container']
+    managementContainer : DockerContainer = containers['management_container']
+    SalesContainer : DockerContainer = containers['sales_container']
+    VisitorsContainer : DockerContainer = containers['visitors_container']
+    # clients : tuple[DockerContainer]= (managementContainer, SalesContainer, VisitorsContainer)
     logger.info("Connecting containers to bridge")
-    bridge.addContainer(dhcpContainer, 'eth1', staticIpWithSN=f'192.168.{nodeNr}.2/{snm}', gateway=f'192.168.{nodeNr}.1')
-    
-    for i, client in enumerate(clients):
-        bridge.addContainer(client, f'eth1')
+    managementIp = nodeNr+1
+    salesIp = managementIp + 1
+    visitorsIp = salesIp + 1
+    managementPort = 'eth2'
+    salesPort = 'eth3'
+    visitorsPort = 'eth4'
+    bridge.addContainer(routeContainer, 'eth1', staticIpWithSN=f'192.168.{nodeNr}.2/{snm}', gateway=f'192.168.{nodeNr}.1') # To outside
+    bridge.addContainer(routeContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
+    bridge.addContainer(routeContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
+    bridge.addContainer(routeContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors
 
+    # for i, client in enumerate(clients):
+    #     bridge.addContainer(client, f'eth1')
+    bridge.addContainer(managementContainer, 'eth1', staticIpWithSN=f'192.168.{managementIp}.2/{snm}', gateway=f'192.168.{managementIp}.1')
+    bridge.addContainer(SalesContainer, 'eth1', staticIpWithSN=f'192.168.{salesIp}.2/{snm}', gateway=f'192.168.{salesIp}.1')
+    bridge.addContainer(VisitorsContainer, 'eth1', staticIpWithSN=f'192.168.{visitorsIp}.2/{snm}', gateway=f'192.168.{visitorsIp}.1')
     logger.info("Finished connecting containers to bridge")
 
-    if staticIps is None:
-        # Running DHCP before VLAN to assign ip's
-        logger.info("Starting dhcp server")
-        dhcpContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf", tty=False, blocking=False)
-        sleep(5)
-        logger.info("Fetching ip addresses for clients")
-        for client in clients:
-            client.dhclient()
-            client.DGW = f"192.168.{nodeNr}.1"
-        logger.info("Adding static routes")
-        for otherNode in others:
-            # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
-            gatewayIp = f"192.168.1.{otherNode}"
-            StaticRouteCommand(f"192.168.{otherNode}.0/{snm}", gatewayIp)
-    else:
-        # Set the static ip's on the containers
-        logger.info("Setting static ip's for containers")
-        for client, staticIp in zip(clients, staticIps):
-            client.ip = f"192.168.{nodeNr}.{staticIp}/{snm}" # start from .3 upwards
+    bridge.setVLAN(routeContainer, 4, 'eth1')
+    bridge.setVLAN(routeContainer, 1, managementPort)
+    bridge.setVLAN(managementContainer, 1, 'eth1')
+    bridge.setVLAN(routeContainer, 2, salesPort)
+    bridge.setVLAN(SalesContainer, 2, 'eth1')
+    bridge.setVLAN(routeContainer, 3, visitorsPort)
+    bridge.setVLAN(managementContainer, 3, 'eth1')
+    
+    # if staticIps is None:
+    #     # Running DHCP before VLAN to assign ip's
+    #     logger.info("Starting dhcp server")
+    #     routeContainer.exec("dnsmasq -d -C /etc/dnsmasq.d/dnsmasq.conf", tty=False, blocking=False)
+    #     sleep(5)
+    #     logger.info("Fetching ip addresses for clients")
+    #     for client in clients:
+    #         client.dhclient()
+    #         client.DGW = f"192.168.{nodeNr}.2"
+    #     logger.info("Adding static routes")
+    #     for otherNode in others:
+    #         # For each node access the 192.168.nodenr.0/24 network through the 192.168.1.nodenr gateway
+    #         gatewayIp = f"192.168.1.{otherNode}"
+    #         StaticRouteCommand(f"192.168.{otherNode}.0/{snm}", gatewayIp)
+    # else:
+    #     # Set the static ip's on the containers
+    #     logger.info("Setting static ip's for containers")
+    #     for client, staticIp in zip(clients, staticIps):
+    #         client.ip = f"192.168.{nodeNr}.{staticIp}/{snm}" # start from .3 upwards
+    #         client.DGW = f"192.168.{nodeNr}.2"
         
-    if shouldVLAN:
-        logger.info("Separating containers into VLANs")
-        for i, client in enumerate(clients):
-            bridge.setVLAN(client, i+1)
-            
-    print(dhcpContainer)
-    print(mainContainer)
-    print(pingContainer)
-    print(stContainer)
+    # # if shouldVLAN:
+    # #     logger.info("Separating containers into VLANs")
+    # #     for i, client in enumerate(clients):
+    # #         bridge.setVLAN(client, i+1)
+    # bridge.setVLAN(managementContainer)
+          
+    print(routeContainer)
+    print(managementContainer)
+    print(SalesContainer)
+    print(VisitorsContainer)
 
     shouldQuit = input("Type [exit] to exit: ") == "exit"
     while not shouldQuit:

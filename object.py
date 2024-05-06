@@ -117,7 +117,7 @@ class OVSBridge():
             gateway=gateway
         )
         
-    def setVLAN(self, container: DockerContainer, tag: int) -> None:
-        BlockingCommand(f"sudo ovs-docker set-vlan {self.name} {container.ovsPort} {container.name} {tag}")
+    def setVLAN(self, container: DockerContainer, tag: int, dockerPort: str = None) -> None:
+        BlockingCommand(f"sudo ovs-docker set-vlan {self.name} {container.ovsPort if dockerPort is None else dockerPort} {container.name} {tag}")
         container.VLAN = tag
     

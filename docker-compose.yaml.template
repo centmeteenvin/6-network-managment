@@ -3,7 +3,7 @@ version: "3.8"
 services:
   dhcp:
     build: ./DockerAP
-    container_name: dhcp_container
+    container_name: route_container
     privileged: True
     tty: True
     volumes:
@@ -11,20 +11,20 @@ services:
     
   main:
     build: ./DockerClient
-    container_name: main_container
+    container_name: management_container
     privileged: True
     tty: True
 
   
   ping:
     build: ./DockerClient
-    container_name: ping_container
+    container_name: sales_container
     privileged: True
     tty: True
 
 
   st:
     build: ./DockerClient
-    container_name: st_container
+    container_name: visitors_container
     privileged: True
     tty: True
