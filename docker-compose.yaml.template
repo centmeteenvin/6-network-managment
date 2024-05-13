@@ -6,9 +6,21 @@ services:
     container_name: route_container
     privileged: True
     tty: True
+    cap_add:
+      - NET_ADMIN
     volumes:
       - ./DockerAP/:/etc/dnsmasq.d/
-    
+
+  backup:
+    build: ./DockerAP
+    container_name: backup_container
+    privileged: True
+    tty: True
+    cap_add:
+     - NET_ADMIN
+    volumes:
+      - ./DockerAP/:/etc/dnsmasq.d/
+
   main:
     build: ./DockerClient
     container_name: management_container

@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 
 # Download all necessary packages and afterwards delete all temporary files to reduce
 # image size
-RUN apt update && apt install dnsmasq iproute2 nano dnsutils tcpdump iputils-ping -y && \apt clean && apt autoclean && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install dnsmasq iproute2 nano dnsutils tcpdump iputils-ping iptables iperf3 keepalived -y && \apt clean && apt autoclean && rm -rf /var/lib/apt/lists/*
 
 # Create 2 directories, -p indicates parent directories are created if necessary
 RUN mkdir -p /var/lib/dnsmasq /etc/dnsmasq.d

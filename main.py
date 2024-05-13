@@ -89,6 +89,7 @@ try:
     
     # Get each container's reference
     routeContainer : DockerContainer = containers['route_container']
+    backupContainer: DockerContainer = containers['backup_container']
     managementContainer : DockerContainer = containers['management_container']
     SalesContainer : DockerContainer = containers['sales_container']
     VisitorsContainer : DockerContainer = containers['visitors_container']
@@ -108,6 +109,10 @@ try:
     bridge.addContainer(routeContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
     bridge.addContainer(routeContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
     bridge.addContainer(routeContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors
+    
+    bridge.addContainer(backupContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
+    bridge.addContainer(backupContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
+    bridge.addContainer(backupContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors  
 
     # for i, client in enumerate(clients):
     #     bridge.addContainer(client, f'eth1')
@@ -121,10 +126,14 @@ try:
 
     # Set each of the containers' ports in the correct VLAN
     bridge.setVLAN(routeContainer, 1, managementPort)
+    bridge.setVLAN(backupContainer, 1, managementPort)
     bridge.setVLAN(managementContainer, 1, 'eth1')
     bridge.setVLAN(routeContainer, 2, salesPort)
+    bridge.setVLAN(backupContainer, 2, salesPort)
     bridge.setVLAN(SalesContainer, 2, 'eth1')
     bridge.setVLAN(routeContainer, 3, visitorsPort)
+    bridge.setVLAN(backupContainer, 3, visitorsPort)
+
     bridge.setVLAN(VisitorsContainer, 3, 'eth1')
     
     # Enable routing on the routing container.
