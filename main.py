@@ -83,38 +83,52 @@ try:
 
     logger.info("Creating dhcp container")
     dockerComposition = DockerCompose()
+    
+    # Bring the containers up
     containers = dockerComposition.up("--build --detach")
+    
+    # Get each container's reference
     routeContainer : DockerContainer = containers['route_container']
     managementContainer : DockerContainer = containers['management_container']
     SalesContainer : DockerContainer = containers['sales_container']
     VisitorsContainer : DockerContainer = containers['visitors_container']
     # clients : tuple[DockerContainer]= (managementContainer, SalesContainer, VisitorsContainer)
     logger.info("Connecting containers to bridge")
+    
+    # Some General configuration properties
     managementIp = nodeNr+1
     salesIp = managementIp + 1
     visitorsIp = salesIp + 1
-    managementPort = 'eth2'
-    salesPort = 'eth3'
-    visitorsPort = 'eth4'
-    bridge.addContainer(routeContainer, 'eth1', staticIpWithSN=f'192.168.{nodeNr}.2/{snm}', gateway=f'192.168.{nodeNr}.1') # To outside
+    managementPort = 'eth1'
+    salesPort = 'eth2'
+    visitorsPort = 'eth3'
+    
+    # Add the route containers to the bridge multiple times for the each present VLAN network.
+    # We don't configure a default route on the route container, we will use the pre-installed docker network to do this.
     bridge.addContainer(routeContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
     bridge.addContainer(routeContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
     bridge.addContainer(routeContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors
 
     # for i, client in enumerate(clients):
     #     bridge.addContainer(client, f'eth1')
+    
+    # Add the containers to the bridge with only one port, always eth1.
+    # Automatically configure their ip and gateway.
     bridge.addContainer(managementContainer, 'eth1', staticIpWithSN=f'192.168.{managementIp}.2/{snm}', gateway=f'192.168.{managementIp}.1')
     bridge.addContainer(SalesContainer, 'eth1', staticIpWithSN=f'192.168.{salesIp}.2/{snm}', gateway=f'192.168.{salesIp}.1')
     bridge.addContainer(VisitorsContainer, 'eth1', staticIpWithSN=f'192.168.{visitorsIp}.2/{snm}', gateway=f'192.168.{visitorsIp}.1')
     logger.info("Finished connecting containers to bridge")
 
-    bridge.setVLAN(routeContainer, 4, 'eth1')
+    # Set each of the containers' ports in the correct VLAN
     bridge.setVLAN(routeContainer, 1, managementPort)
     bridge.setVLAN(managementContainer, 1, 'eth1')
     bridge.setVLAN(routeContainer, 2, salesPort)
     bridge.setVLAN(SalesContainer, 2, 'eth1')
     bridge.setVLAN(routeContainer, 3, visitorsPort)
     bridge.setVLAN(VisitorsContainer, 3, 'eth1')
+    
+    # Enable routing on the routing container.
+    routeContainer.exec('sysctl -w net.ipv4.ip_forward=1')
     
     # if staticIps is None:
     #     # Running DHCP before VLAN to assign ip's
