@@ -106,13 +106,13 @@ try:
     
     # Add the route containers to the bridge multiple times for the each present VLAN network.
     # We don't configure a default route on the route container, we will use the pre-installed docker network to do this.
-    bridge.addContainer(routeContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
-    bridge.addContainer(routeContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
-    bridge.addContainer(routeContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors
+    bridge.addContainer(routeContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.254/{snm}') # To management
+    bridge.addContainer(routeContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.254/{snm}') # To sales
+    bridge.addContainer(routeContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.254/{snm}') # To Visitors
     
-    bridge.addContainer(backupContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.1/{snm}') # To management
-    bridge.addContainer(backupContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.1/{snm}') # To sales
-    bridge.addContainer(backupContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.1/{snm}') # To Visitors  
+    bridge.addContainer(backupContainer, managementPort, staticIpWithSN=f'192.168.{managementIp}.253/{snm}') # To management
+    bridge.addContainer(backupContainer, salesPort, staticIpWithSN=f'192.168.{salesIp}.253/{snm}') # To sales
+    bridge.addContainer(backupContainer, visitorsPort, staticIpWithSN=f'192.168.{visitorsIp}.253/{snm}') # To Visitors  
 
     # for i, client in enumerate(clients):
     #     bridge.addContainer(client, f'eth1')
